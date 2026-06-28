@@ -1,0 +1,883 @@
+{
+  "name": "MENA Oil & Gas ESG Ontology",
+  "version": "1.0",
+  "date": "2026-06-21",
+  "author": "Mohammed Farhan (ENGG940 Dissertation, University of Wollongong)",
+  "description": "Domain-specific, machine-readable ESG ontology for automated analysis of MENA oil & gas supplier sustainability reports. Three tiers: Pillar -> Topic -> terms/synonyms/variants. Includes GRI 11 + SASB tagging, quantitative flags with unit hints, region-specific localization vocabulary, and a greenwashing/confidence-scoring lexicon.",
+  "framework_basis": [
+    "GRI 11: Oil and Gas Sector 2021",
+    "GRI Topic Standards (200/300/400 series)",
+    "SASB EM-EP (Exploration & Production) and EM-SV (Services)",
+    "TCFD"
+  ],
+  "tiers": {
+    "tier_1": "ESG pillar (Environmental / Social / Governance)",
+    "tier_2": "Topic (e.g. GHG Emissions)",
+    "tier_3": "keywords / synonyms / industry variants that map to the topic"
+  },
+  "pipeline_usage": {
+    "component_A_classification": "tier-1/tier-2 provide the label schema; tier-3 terms seed weak-supervision labels for fine-tuning DistilBERT",
+    "component_B_regex": "topics with quantitative=true + their units drive the regex extraction patterns",
+    "component_C_ner": "keywords + region_specific feed the spaCy EntityRuler (certifications, targets, ICV references)",
+    "component_D_greenwashing": "greenwashing_lexicon + claim-vs-evidence comparison produce the per-report greenwashing/confidence score"
+  },
+  "topic_count": 16,
+  "topics": [
+    {
+      "id": "E1",
+      "pillar": "Environmental",
+      "topic": "GHG Emissions",
+      "gri": [
+        "GRI 11.1",
+        "GRI 305"
+      ],
+      "sasb": [
+        "EM-EP-110a",
+        "EM-SV-110a"
+      ],
+      "quantitative": true,
+      "metric_family": "Emissions & energy",
+      "units": [
+        "tCO2e",
+        "ktCO2e",
+        "MtCO2e",
+        "MtCO2",
+        "tCO2e/boe",
+        "kgCO2e/boe",
+        "gCO2e/MJ"
+      ],
+      "metric_examples": [
+        "Scope 1",
+        "Scope 2",
+        "Scope 3",
+        "carbon intensity"
+      ],
+      "keywords": [
+        "scope 1",
+        "scope 2",
+        "scope 3",
+        "direct emissions",
+        "indirect emissions",
+        "ghg emissions",
+        "greenhouse gas",
+        "carbon emissions",
+        "co2",
+        "co2e",
+        "co2-equivalent",
+        "carbon footprint",
+        "carbon intensity",
+        "ghg intensity",
+        "emissions intensity",
+        "value chain emissions"
+      ]
+    },
+    {
+      "id": "E2",
+      "pillar": "Environmental",
+      "topic": "Energy Management",
+      "gri": [
+        "GRI 302"
+      ],
+      "sasb": [
+        "EM-SV-110a"
+      ],
+      "quantitative": true,
+      "metric_family": "Emissions & energy",
+      "units": [
+        "GJ",
+        "TJ",
+        "PJ",
+        "MWh",
+        "GWh",
+        "kWh"
+      ],
+      "metric_examples": [
+        "energy consumption",
+        "energy intensity",
+        "% renewable"
+      ],
+      "keywords": [
+        "energy consumption",
+        "energy use",
+        "energy intensity",
+        "energy efficiency",
+        "renewable energy",
+        "electricity",
+        "fuel consumption",
+        "power consumption",
+        "solar",
+        "wind"
+      ]
+    },
+    {
+      "id": "E3",
+      "pillar": "Environmental",
+      "topic": "Air Emissions, Flaring & Methane",
+      "gri": [
+        "GRI 11.3",
+        "GRI 305"
+      ],
+      "sasb": [
+        "EM-EP-120a"
+      ],
+      "quantitative": true,
+      "metric_family": "Emissions & energy",
+      "units": [
+        "tonnes",
+        "tCH4",
+        "ktCH4",
+        "ppm",
+        "%",
+        "mscf"
+      ],
+      "metric_examples": [
+        "flaring volume",
+        "methane intensity",
+        "NOx",
+        "SOx"
+      ],
+      "keywords": [
+        "flaring",
+        "flare",
+        "routine flaring",
+        "gas flaring",
+        "flaring intensity",
+        "methane",
+        "ch4",
+        "methane intensity",
+        "fugitive emissions",
+        "venting",
+        "vented",
+        "nox",
+        "sox",
+        "voc",
+        "particulate matter",
+        "associated gas",
+        "zero routine flaring"
+      ]
+    },
+    {
+      "id": "E4",
+      "pillar": "Environmental",
+      "topic": "Water & Effluents",
+      "gri": [
+        "GRI 11.6",
+        "GRI 303"
+      ],
+      "sasb": [
+        "EM-EP-140a",
+        "EM-SV-140a"
+      ],
+      "quantitative": true,
+      "metric_family": "Water, waste & workforce",
+      "units": [
+        "m3",
+        "ML",
+        "megalitres",
+        "thousand m3",
+        "million m3",
+        "barrels"
+      ],
+      "metric_examples": [
+        "water withdrawal",
+        "water consumption",
+        "% recycled"
+      ],
+      "keywords": [
+        "water withdrawal",
+        "water consumption",
+        "freshwater",
+        "water recycled",
+        "water reuse",
+        "produced water",
+        "water reinjection",
+        "produced water re-injection",
+        "water discharge",
+        "effluents",
+        "water intensity",
+        "desalinated water"
+      ]
+    },
+    {
+      "id": "E5",
+      "pillar": "Environmental",
+      "topic": "Waste & Spills",
+      "gri": [
+        "GRI 11.5",
+        "GRI 306"
+      ],
+      "sasb": [
+        "EM-EP-160a"
+      ],
+      "quantitative": true,
+      "metric_family": "Water, waste & workforce",
+      "units": [
+        "tonnes",
+        "t",
+        "kg",
+        "number",
+        "barrels"
+      ],
+      "metric_examples": [
+        "hazardous waste",
+        "number of spills",
+        "spill volume"
+      ],
+      "keywords": [
+        "waste",
+        "hazardous waste",
+        "non-hazardous waste",
+        "waste recycled",
+        "waste diverted",
+        "landfill",
+        "spills",
+        "oil spills",
+        "number of spills",
+        "spill volume",
+        "hydrocarbon spills",
+        "loss of primary containment",
+        "lopc"
+      ]
+    },
+    {
+      "id": "E6",
+      "pillar": "Environmental",
+      "topic": "Biodiversity & Land",
+      "gri": [
+        "GRI 11.4",
+        "GRI 11.16",
+        "GRI 304"
+      ],
+      "sasb": [
+        "EM-EP-160a"
+      ],
+      "quantitative": false,
+      "metric_family": "Water, waste & workforce",
+      "units": [
+        "hectares",
+        "ha",
+        "%"
+      ],
+      "metric_examples": [
+        "protected area",
+        "no net loss"
+      ],
+      "keywords": [
+        "biodiversity",
+        "protected areas",
+        "iucn",
+        "habitat",
+        "rehabilitation",
+        "reforestation",
+        "land use",
+        "ecological",
+        "species",
+        "mangrove",
+        "marine ecosystem",
+        "no net loss"
+      ]
+    },
+    {
+      "id": "S1",
+      "pillar": "Social",
+      "topic": "Occupational Health & Safety",
+      "gri": [
+        "GRI 11.9",
+        "GRI 403"
+      ],
+      "sasb": [
+        "EM-EP-320a",
+        "EM-SV-320a"
+      ],
+      "quantitative": true,
+      "metric_family": "Safety",
+      "units": [
+        "per 200,000 hours",
+        "per 1,000,000 hours",
+        "rate",
+        "number"
+      ],
+      "metric_examples": [
+        "LTIF",
+        "TRIR",
+        "fatalities",
+        "Tier 1 PSE"
+      ],
+      "synonym_cluster": {
+        "concept": "Employee Safety Rate",
+        "members": [
+          "LTIF",
+          "LTIFR",
+          "LTIR",
+          "TRIR",
+          "TRIF"
+        ],
+        "note": "Same underlying concept reported under competing conventions; denominators differ (200,000 vs 1,000,000 hours) so raw figures are NOT directly comparable without normalisation."
+      },
+      "keywords": [
+        "ltif",
+        "ltifr",
+        "ltir",
+        "lost time injury frequency",
+        "lost time injury rate",
+        "trir",
+        "total recordable incident rate",
+        "trif",
+        "recordable injuries",
+        "fatalities",
+        "fatal accident rate",
+        "far",
+        "near miss",
+        "process safety event",
+        "tier 1",
+        "tier 2",
+        "occupational illness",
+        "hse",
+        "health and safety"
+      ]
+    },
+    {
+      "id": "S2",
+      "pillar": "Social",
+      "topic": "Workforce, Employment & Diversity",
+      "gri": [
+        "GRI 11.10",
+        "GRI 11.11",
+        "GRI 401",
+        "GRI 404",
+        "GRI 405"
+      ],
+      "sasb": [],
+      "quantitative": true,
+      "metric_family": "Water, waste & workforce",
+      "units": [
+        "%",
+        "number",
+        "hours"
+      ],
+      "metric_examples": [
+        "% women",
+        "turnover",
+        "training hours"
+      ],
+      "keywords": [
+        "employees",
+        "headcount",
+        "workforce",
+        "employee turnover",
+        "attrition",
+        "female",
+        "women",
+        "gender",
+        "diversity",
+        "inclusion",
+        "nationals",
+        "national workforce",
+        "training hours",
+        "employee engagement",
+        "new hires",
+        "women in management"
+      ]
+    },
+    {
+      "id": "S3",
+      "pillar": "Social",
+      "topic": "Local Content & Nationalization",
+      "gri": [
+        "GRI 11.14",
+        "GRI 204",
+        "GRI 202"
+      ],
+      "sasb": [],
+      "quantitative": true,
+      "metric_family": "Localization (ICV/IKTVA)",
+      "units": [
+        "%",
+        "$bn",
+        "SAR bn",
+        "AED bn",
+        "QAR bn"
+      ],
+      "metric_examples": [
+        "ICV score",
+        "IKTVA %",
+        "nationalization %"
+      ],
+      "note": "Region-specific Social pillar. Western models read 'social investment' as philanthropy; in MENA O&G it means % of spend/workforce retained in-country. See region_specific block.",
+      "keywords": [
+        "in-country value",
+        "icv",
+        "icv score",
+        "iktva",
+        "in-kingdom total value add",
+        "local content",
+        "localization",
+        "localisation",
+        "nationalization",
+        "nationalisation",
+        "saudization",
+        "saudisation",
+        "nitaqat",
+        "emiratization",
+        "emiratisation",
+        "qatarization",
+        "qatarisation",
+        "omanization",
+        "local suppliers",
+        "local spend",
+        "local procurement",
+        "gdp contribution",
+        "national workforce"
+      ]
+    },
+    {
+      "id": "S4",
+      "pillar": "Social",
+      "topic": "Local Communities & Human Rights",
+      "gri": [
+        "GRI 11.15",
+        "GRI 11.17",
+        "GRI 11.18",
+        "GRI 413",
+        "GRI 410",
+        "GRI 411"
+      ],
+      "sasb": [
+        "EM-EP-210a",
+        "EM-EP-210b"
+      ],
+      "quantitative": false,
+      "metric_family": "Water, waste & workforce",
+      "units": [
+        "$",
+        "number",
+        "hours"
+      ],
+      "metric_examples": [
+        "social investment",
+        "community grievances"
+      ],
+      "keywords": [
+        "community",
+        "local communities",
+        "social investment",
+        "community engagement",
+        "grievance mechanism",
+        "human rights",
+        "indigenous peoples",
+        "resettlement",
+        "philanthropy",
+        "donations",
+        "volunteering",
+        "stakeholder engagement",
+        "security and human rights"
+      ]
+    },
+    {
+      "id": "S5",
+      "pillar": "Social",
+      "topic": "Supply Chain & Procurement (Scope 3)",
+      "gri": [
+        "GRI 308",
+        "GRI 414",
+        "GRI 204"
+      ],
+      "sasb": [],
+      "quantitative": false,
+      "metric_family": "Emissions & energy",
+      "units": [
+        "%",
+        "number"
+      ],
+      "metric_examples": [
+        "suppliers assessed",
+        "supplier code coverage"
+      ],
+      "note": "Core to this thesis: supplier ESG performance and value-chain (Scope 3) data.",
+      "keywords": [
+        "supply chain",
+        "suppliers",
+        "supplier assessment",
+        "supplier code of conduct",
+        "procurement",
+        "vendor",
+        "value chain",
+        "scope 3 supply chain",
+        "supplier audits",
+        "responsible sourcing",
+        "supplier esg",
+        "third-party suppliers"
+      ]
+    },
+    {
+      "id": "G1",
+      "pillar": "Governance",
+      "topic": "Business Ethics & Anti-corruption",
+      "gri": [
+        "GRI 11.19",
+        "GRI 11.20",
+        "GRI 205",
+        "GRI 206"
+      ],
+      "sasb": [
+        "EM-EP-510a",
+        "EM-SV-510a"
+      ],
+      "quantitative": true,
+      "metric_family": "Water, waste & workforce",
+      "units": [
+        "%",
+        "number"
+      ],
+      "metric_examples": [
+        "% trained on anti-corruption",
+        "incidents"
+      ],
+      "keywords": [
+        "anti-corruption",
+        "anti-bribery",
+        "bribery",
+        "code of conduct",
+        "code of ethics",
+        "whistleblower",
+        "ethics training",
+        "conflicts of interest",
+        "compliance",
+        "fraud",
+        "abac",
+        "integrity",
+        "due diligence",
+        "anti-competitive"
+      ]
+    },
+    {
+      "id": "G2",
+      "pillar": "Governance",
+      "topic": "Corporate Governance & Board",
+      "gri": [
+        "GRI 2",
+        "GRI 405-1"
+      ],
+      "sasb": [],
+      "quantitative": true,
+      "metric_family": "Water, waste & workforce",
+      "units": [
+        "%",
+        "number"
+      ],
+      "metric_examples": [
+        "% independent directors",
+        "women on board"
+      ],
+      "keywords": [
+        "board",
+        "board independence",
+        "independent directors",
+        "board diversity",
+        "governance",
+        "audit committee",
+        "board committees",
+        "executive remuneration",
+        "board composition",
+        "women on board",
+        "esg governance",
+        "oversight"
+      ]
+    },
+    {
+      "id": "G3",
+      "pillar": "Governance",
+      "topic": "Risk, Asset Integrity & Critical Incident Mgmt",
+      "gri": [
+        "GRI 11.7",
+        "GRI 11.8"
+      ],
+      "sasb": [
+        "EM-EP-540a",
+        "EM-EP-530a"
+      ],
+      "quantitative": false,
+      "metric_family": "Safety",
+      "units": [
+        "number"
+      ],
+      "metric_examples": [
+        "Tier 1 process safety events",
+        "loss of containment"
+      ],
+      "keywords": [
+        "asset integrity",
+        "process safety",
+        "critical incident",
+        "risk management",
+        "emergency preparedness",
+        "psm",
+        "loss of containment",
+        "tier 1 process safety",
+        "business continuity",
+        "cyber security",
+        "climate risk",
+        "decommissioning",
+        "closure and rehabilitation"
+      ]
+    },
+    {
+      "id": "G4",
+      "pillar": "Governance",
+      "topic": "Economic Performance & Tax Transparency",
+      "gri": [
+        "GRI 11.14",
+        "GRI 11.21",
+        "GRI 201",
+        "GRI 207"
+      ],
+      "sasb": [
+        "EM-EP-420a"
+      ],
+      "quantitative": true,
+      "metric_family": "Localization (ICV/IKTVA)",
+      "units": [
+        "$",
+        "$bn",
+        "SAR",
+        "AED",
+        "%"
+      ],
+      "metric_examples": [
+        "economic value generated",
+        "payments to governments"
+      ],
+      "keywords": [
+        "revenue",
+        "ebitda",
+        "economic value generated",
+        "payments to governments",
+        "taxes",
+        "royalties",
+        "tax transparency",
+        "country-by-country",
+        "capital expenditure",
+        "dividends",
+        "reserves"
+      ]
+    },
+    {
+      "id": "X1",
+      "pillar": "Environmental",
+      "topic": "Climate Strategy, Targets & Transition",
+      "gri": [
+        "GRI 11.2",
+        "TCFD"
+      ],
+      "sasb": [],
+      "quantitative": true,
+      "metric_family": "Emissions & energy",
+      "units": [
+        "%",
+        "year",
+        "tCO2e"
+      ],
+      "metric_examples": [
+        "net-zero target year",
+        "interim reduction %"
+      ],
+      "keywords": [
+        "net zero",
+        "net-zero",
+        "carbon neutral",
+        "decarbonization",
+        "decarbonisation",
+        "energy transition",
+        "climate strategy",
+        "science-based targets",
+        "sbti",
+        "interim target",
+        "transition plan",
+        "tcfd",
+        "scenario analysis",
+        "paris agreement",
+        "1.5c",
+        "emission reduction target",
+        "roadmap",
+        "2050",
+        "2060"
+      ]
+    }
+  ],
+  "region_specific": {
+    "concept": "Local Content & Nationalization (maps to topic S3)",
+    "note": "Cross-country localization vocabulary. Each term is tagged by jurisdiction but mapped to the single S3 concept so the model treats them as synonymous paths while preserving regional origin for benchmarking.",
+    "terms": [
+      {
+        "term": "IKTVA",
+        "full": "In-Kingdom Total Value Add",
+        "country": "Saudi Arabia",
+        "type": "local-content program",
+        "quantified_as": "IKTVA % score"
+      },
+      {
+        "term": "ICV",
+        "full": "In-Country Value",
+        "country": "UAE",
+        "type": "local-content program",
+        "quantified_as": "ICV % / ICV certificate / $bn returned"
+      },
+      {
+        "term": "Saudization / Nitaqat",
+        "full": "Saudi workforce nationalization (Nitaqat program)",
+        "country": "Saudi Arabia",
+        "type": "workforce nationalization",
+        "quantified_as": "% Saudi nationals"
+      },
+      {
+        "term": "Emiratization",
+        "full": "UAE workforce nationalization",
+        "country": "UAE",
+        "type": "workforce nationalization",
+        "quantified_as": "% Emirati nationals"
+      },
+      {
+        "term": "Qatarization",
+        "full": "Qatar workforce nationalization",
+        "country": "Qatar",
+        "type": "workforce nationalization",
+        "quantified_as": "% Qatari nationals"
+      },
+      {
+        "term": "Omanization",
+        "full": "Oman workforce nationalization",
+        "country": "Oman",
+        "type": "workforce nationalization",
+        "quantified_as": "% Omani nationals"
+      },
+      {
+        "term": "Local Content",
+        "full": "Generic local content / local spend",
+        "country": "GCC-wide",
+        "type": "local-content",
+        "quantified_as": "% local spend"
+      }
+    ]
+  },
+  "greenwashing_lexicon": {
+    "purpose": "Detect the gap between narrative claims and substantiated data; produce a per-report greenwashing score (0-100, higher=worse) and an inverse confidence weight used in benchmarking. Framed as a transparent disclosure-quality risk indicator, NOT a definitive verdict.",
+    "aspirational_vague_terms": [
+      "committed to",
+      "commitment",
+      "strive",
+      "striving",
+      "aim to",
+      "aspire",
+      "aspiration",
+      "endeavour",
+      "working towards",
+      "on a journey",
+      "journey",
+      "passionate",
+      "we believe",
+      "dedicated to",
+      "proud to",
+      "leading",
+      "world-class",
+      "best-in-class",
+      "robust",
+      "holistic",
+      "cutting-edge",
+      "continuously improving",
+      "embed",
+      "foster",
+      "champion",
+      "unwavering",
+      "relentless",
+      "transformative"
+    ],
+    "commitment_cues_future": [
+      "will",
+      "plan to",
+      "intend to",
+      "aim",
+      "target",
+      "goal",
+      "ambition",
+      "going forward",
+      "in the future",
+      "expected to",
+      "seek to",
+      "look to",
+      "by 2030",
+      "by 2050",
+      "by 2060"
+    ],
+    "hedging_terms": [
+      "may",
+      "might",
+      "could",
+      "potentially",
+      "where possible",
+      "as appropriate",
+      "help to",
+      "contribute to",
+      "support",
+      "approximately",
+      "around",
+      "estimated"
+    ],
+    "evidence_signals": {
+      "quantitative_substantiation": [
+        "number followed by a unit (tCO2e, %, GJ, m3, rate)",
+        "baseline year stated",
+        "year-on-year change",
+        "absolute figure with year"
+      ],
+      "assurance_transparency": [
+        "third-party assured",
+        "independently verified",
+        "external assurance",
+        "limited assurance",
+        "reasonable assurance",
+        "assurance statement",
+        "in accordance with GRI",
+        "GRI content index",
+        "SASB index",
+        "TCFD",
+        "ISSB",
+        "restated",
+        "audited",
+        "ISO 14001",
+        "ISO 45001"
+      ]
+    },
+    "scoring_model": {
+      "output_range": "0-100 (higher = more greenwashing)",
+      "confidence_weight": "confidence = 100 - greenwashing_score",
+      "components": [
+        {
+          "name": "claim_substantiation_gap",
+          "weight": 0.45,
+          "definition": "share of ESG topics the report makes commitments/targets on but provides NO quantitative metric for"
+        },
+        {
+          "name": "vague_language_density",
+          "weight": 0.25,
+          "definition": "aspirational + hedging term count normalised per 1,000 words"
+        },
+        {
+          "name": "specificity_deficit",
+          "weight": 0.2,
+          "definition": "ratio of qualitative claims to quantitative data points (many words, few numbers)"
+        },
+        {
+          "name": "assurance_deficit",
+          "weight": 0.1,
+          "definition": "absence of third-party assurance / framework-alignment signals"
+        }
+      ],
+      "risk_bands": {
+        "low": "0-30",
+        "moderate": "31-60",
+        "high": "61-100"
+      },
+      "weights_tunable": true
+    }
+  }
+}
