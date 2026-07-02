@@ -5,3 +5,6 @@ dist-ssr
 .DS_Store
 .vercel
 .vite
+
+# TS incremental build info
+*.tsbuildinfo

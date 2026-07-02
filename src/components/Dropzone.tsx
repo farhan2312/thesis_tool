@@ -40,7 +40,7 @@ export default function Dropzone({ onFile, disabled, disabledHint }: Props) {
       <p>
         {disabled
           ? (disabledHint ?? 'Preparing…')
-          : 'or click to choose a file — it is parsed and analysed here, in this tab.'}
+          : 'or click to choose a file, it is parsed and analysed here, in this tab.'}
       </p>
     </div>
   )

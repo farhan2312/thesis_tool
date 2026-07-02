@@ -7,6 +7,27 @@ import { loadClassifier, type Backend, type Classifier, type ModelLoadProgress }
 import { analyzePdf } from './lib/pipeline'
 import type { PipelineResult, Progress } from './lib/types'
 
+const FULL_TITLE = 'AI-Driven ESG Compliance Analysis for the MENA Oil & Gas Supply Chain'
+const TAGLINE = 'Automated, regionally aware analysis of supplier ESG reports, right in your browser.'
+const SUMMARY =
+  "Drop in a supplier's ESG or sustainability report and this tool reads it the way the research " +
+  'framework does: it classifies the text by ESG topic, pulls out the reported figures and ' +
+  'commitments, and flags the gap between what a report claims and what it actually backs up with ' +
+  'evidence. Everything runs locally in your browser, so your file never leaves your device.'
+const ABOUT =
+  'This tool is a proof of concept from a Master of Engineering dissertation at the University of ' +
+  'Wollongong. The research addresses a practical problem in the Middle East and North Africa oil ' +
+  'and gas sector: the ESG performance data that National Oil Companies need to govern their supply ' +
+  'chains, especially Scope 3 emissions, is locked inside thousands of unstructured, inconsistently ' +
+  'formatted PDF reports that cannot be compared at scale. The framework pairs a domain-specific ESG ' +
+  'ontology (anchored to GRI 11 and SASB, and enriched with regional terms such as ICV and IKTVA) ' +
+  'with a hybrid NLP pipeline: a fine-tuned transformer classifies each paragraph into one of ' +
+  'sixteen ESG topics, rule-based extraction recovers the quantitative figures, entity recognition ' +
+  'captures commitments and certifications, and a transparent score flags likely greenwashing. It ' +
+  'turns unstructured disclosure into structured, comparable, auditable data. This browser version ' +
+  'runs a lightweight model for speed and privacy; the full study reports higher accuracy from a ' +
+  'larger ensemble.'
+
 export default function App() {
   const [classifier, setClassifier] = useState<Classifier | null>(null)
   const [modelProgress, setModelProgress] = useState<ModelLoadProgress | null>(null)
@@ -41,7 +62,7 @@ export default function App() {
       const r = await analyzePdf(f, classifier, setProgress)
       if (r.stats.paragraphs === 0) {
         setError(
-          'No extractable text was found in this PDF. It may be a scanned / image-only document — OCR is outside this in-browser tool.',
+          'No extractable text was found in this PDF. It may be a scanned or image-only document, and OCR is outside this in-browser tool.',
         )
         setProgress(null)
         return
@@ -63,19 +84,24 @@ export default function App() {
 
   const modelReady = !!classifier
   const analyzing = !!progress && !result
+  const landing = !analyzing && !result
 
   return (
     <div className="app">
       <header className="app-header">
-        <div>
-          <h1 className="app-title">
-            ESG Report Analysis <span className="accent">in your browser</span>
-          </h1>
-          <p className="app-subtitle">
-            Drop a MENA oil &amp; gas sustainability PDF. It is parsed, classified by ESG topic,
-            mined for figures and entities, and scored for greenwashing — all client-side, with a
-            fine-tuned transformer running on WebGPU / WebAssembly.
-          </p>
+        <div className="brand-block">
+          <div className="brand">
+            <span className="brand-mark" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </span>
+            <span className="brand-name">
+              <span className="accent">ESG</span>scope
+            </span>
+          </div>
+          <h1 className="app-title">{FULL_TITLE}</h1>
         </div>
         <span className="privacy-pill">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -84,6 +110,13 @@ export default function App() {
           File never leaves your device
         </span>
       </header>
+
+      {landing && (
+        <div className="hero">
+          <p className="hero-tagline">{TAGLINE}</p>
+          <p className="hero-summary">{SUMMARY}</p>
+        </div>
+      )}
 
       {modelError && (
         <div className="error-box">
@@ -131,11 +164,23 @@ export default function App() {
         />
       )}
 
+      {landing && (
+        <section className="about-card">
+          <h2 className="about-title">About this research</h2>
+          <p className="about-text">{ABOUT}</p>
+        </section>
+      )}
+
       <footer className="footer-note">
-        Runs entirely in your browser. Your file never leaves your device. · Classifier ≈0.75 gold
-        accuracy (the deliberate trade for a zero-infrastructure, fully private tool); figure
-        extraction, NER and the greenwashing score are deterministic ports of the dissertation
-        pipeline.
+        <p className="attribution">
+          Mohammed Farhan · ENGG940 Master&apos;s Dissertation · University of Wollongong ·
+          Supervisor: Dr. Hazem Gouda
+        </p>
+        <p>
+          Runs entirely in your browser. Your file never leaves your device. Classifier accuracy is
+          about 0.75 in this browser build; figure extraction, entity recognition and the
+          greenwashing score are deterministic ports of the dissertation pipeline.
+        </p>
       </footer>
     </div>
   )

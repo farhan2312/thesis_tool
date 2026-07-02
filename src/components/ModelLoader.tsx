@@ -29,7 +29,7 @@ export default function ModelLoader({ progress, backend, ready }: Props) {
       </div>
       <p className="card-sub" style={{ margin: '14px 0 0' }}>
         The fine-tuned ESG classifier (~80&nbsp;MB, int8) downloads <strong>once</strong> and is then
-        cached by your browser — subsequent loads are instant. It runs on{' '}
+        cached by your browser, and subsequent loads are instant. It runs on{' '}
         <strong>{backend === 'webgpu' ? 'WebGPU' : backend === 'wasm' ? 'WebAssembly' : 'WebGPU / WebAssembly'}</strong>,
         entirely on your device.
       </p>

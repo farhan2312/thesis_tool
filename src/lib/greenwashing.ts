@@ -1,10 +1,10 @@
-// Port of 5_greenwashing.py — transparent disclosure-quality risk score (0-100).
+// Port of 5_greenwashing.py: transparent disclosure-quality risk score (0-100).
 // Combines four signals with the ontology weights; same caps and Low/Moderate/High bands.
 
 import type { LoadedOntology } from './ontology'
 import type { ClassifiedParagraph, GreenwashingResult, Metric, RiskBand } from './types'
 
-// Tunable caps for normalisation (per 1,000 words) — identical to the Python.
+// Tunable caps for normalisation (per 1,000 words), identical to the Python.
 const CAP_VAGUE = 15.0
 const CAP_QUANT = 3.0
 const MIN_TOPIC_PARAS = 2

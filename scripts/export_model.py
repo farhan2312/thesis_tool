@@ -6,8 +6,8 @@ Exports the fine-tuned ESG classifier to ONNX, patches the label map to the real
 topic ids, copies the tokenizer, and quantizes to int8 for @huggingface/transformers
 (transformers.js v3). Output lands in  public/models/esg-distilbert/.
 
-The saved model `pipeline_output/model_distilbert_supervised/` is — despite the folder
-name — a ClimateBERT / DistilRoBERTa fine-tune (RobertaForSequenceClassification),
+The saved model `pipeline_output/model_distilbert_supervised/` is, despite the folder
+name, a ClimateBERT / DistilRoBERTa fine-tune (RobertaForSequenceClassification),
 0.745 gold accuracy. It is the recommended "~0.75" model from the build brief.
 
 Run from anywhere with a Python env that has torch + transformers (no torchvision needed):

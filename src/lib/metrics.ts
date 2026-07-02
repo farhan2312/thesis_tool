@@ -1,4 +1,4 @@
-// Port of 2b_extract_metrics_refined.py — classifier-aware quantitative extraction.
+// Port of 2b_extract_metrics_refined.py: classifier-aware quantitative extraction.
 // The four regex families and the attribution logic are reproduced exactly; each figure
 // is attributed to the paragraph's predicted topic (the refinement over 2_extract_metrics.py).
 
@@ -48,7 +48,7 @@ const PATTERNS: Family[] = [
   {
     fam: 'volume',
     // Trailing boundary is (?!\w) rather than \b: identical to \b for the ASCII-ending
-    // units, but unlike JS's ASCII-only \b it also matches "m³" before a space — Python's
+    // units, but unlike JS's ASCII-only \b it also matches "m³" before a space; Python's
     // Unicode \b treats the superscript ³ as a word char, so m³\b matches there.
     rx: new RegExp(
       `(${NUM})\\s*(million\\s*m3|thousand\\s*m3|m3|m³|ml|megalit\\w+|barrels|bbl)(?!\\w)`,

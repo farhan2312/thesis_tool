@@ -5,7 +5,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 // Cross-origin-isolation headers. They enable multithreaded WASM (SharedArrayBuffer)
 // and are required to match the production Vercel headers (see vercel.json). Because
 // the model and the ONNX runtime WASM are both served same-origin, require-corp does
-// not block them — same-origin resources are always allowed under COEP.
+// not block them; same-origin resources are always allowed under COEP.
 const crossOriginIsolation = {
   'Cross-Origin-Opener-Policy': 'same-origin',
   'Cross-Origin-Embedder-Policy': 'require-corp',
@@ -16,7 +16,7 @@ export default defineConfig({
   plugins: [
     react(),
     // Self-host the onnxruntime-web WASM binaries under /ort/ so the runtime loads
-    // same-origin (COEP-safe) and the site is fully self-contained — no CDN at runtime.
+    // same-origin (COEP-safe) and the site is fully self-contained, no CDN at runtime.
     viteStaticCopy({
       targets: [
         {

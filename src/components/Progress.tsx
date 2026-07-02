@@ -25,7 +25,7 @@ function stageLabel(p: Progress): string {
     case 'reading':
       return 'Reading the file locally…'
     case 'extracting':
-      return p.total ? `Extracting text — page ${p.current} of ${p.total}` : 'Extracting text…'
+      return p.total ? `Extracting text, page ${p.current} of ${p.total}` : 'Extracting text…'
     case 'segmenting':
       return 'Segmenting into paragraphs…'
     case 'classifying':

@@ -1,4 +1,5 @@
 import type { Backend } from '../lib/classify'
+import { bandClass, bandColor } from '../lib/palette'
 import type { PipelineResult } from '../lib/types'
 import EntitiesPanel from './EntitiesPanel'
 import GreenwashingPanel from './GreenwashingPanel'
@@ -13,21 +14,19 @@ interface Props {
 }
 
 export default function ResultsDashboard({ result, backend, fileName, onReset }: Props) {
-  const { meta, stats } = result
+  const { meta, stats, greenwashing: gw } = result
+
+  const kpis = [
+    { step: 'A', num: stats.paragraphs.toLocaleString(), lbl: 'Paragraphs classified', color: 'var(--ink)' },
+    { step: 'B', num: result.metrics.length.toLocaleString(), lbl: 'Figures extracted', color: 'var(--ink)' },
+    { step: 'C', num: result.entities.length.toLocaleString(), lbl: 'Entities tagged', color: 'var(--ink)' },
+  ]
+
   return (
     <div className="dashboard">
       <div className="results-head">
         <div className="file-badge">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--green)"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <path d="M14 2v6h6" />
           </svg>
@@ -38,10 +37,7 @@ export default function ResultsDashboard({ result, backend, fileName, onReset }:
             {meta.year ? ` ${meta.year}` : ''}
           </span>
           {backend && (
-            <span
-              className="chip"
-              style={{ background: 'rgba(21,101,192,0.1)', color: 'var(--blue)' }}
-            >
+            <span className="chip" style={{ background: 'rgba(21,101,192,0.1)', color: 'var(--blue)' }}>
               {backend === 'webgpu' ? 'WebGPU' : 'WASM'}
             </span>
           )}
@@ -51,12 +47,31 @@ export default function ResultsDashboard({ result, backend, fileName, onReset }:
         </button>
       </div>
 
-      <TopicPanel paragraphs={result.paragraphs} />
-      <div className="grid-2">
-        <GreenwashingPanel gw={result.greenwashing} />
-        <EntitiesPanel entities={result.entities} />
+      <div className="kpi-row">
+        {kpis.map((k) => (
+          <div className="kpi" key={k.step}>
+            <span className={`kpi-step step-${k.step}`}>{k.step}</span>
+            <div className="kpi-num" style={{ color: k.color }}>
+              {k.num}
+            </div>
+            <div className="kpi-lbl">{k.lbl}</div>
+          </div>
+        ))}
+        <div className="kpi">
+          <span className="kpi-step step-D">D</span>
+          <div className="kpi-num" style={{ color: bandColor(gw.band) }}>
+            {gw.score}
+          </div>
+          <div className="kpi-lbl">
+            Greenwashing <span className={`chip ${bandClass(gw.band)}`}>{gw.band}</span>
+          </div>
+        </div>
       </div>
+
+      <TopicPanel paragraphs={result.paragraphs} />
       <MetricsPanel metrics={result.metrics} />
+      <EntitiesPanel entities={result.entities} />
+      <GreenwashingPanel gw={gw} />
     </div>
   )
 }

@@ -56,8 +56,8 @@ function reconstructPage(items: TextItem[]): string {
 
   const medH = median(lines.map((l) => l.h)) || 10
   // PyMuPDF's get_text("text") joins lines on a page with single newlines and only
-  // rarely emits a blank line (at genuine block boundaries). Matching that — joining
-  // conservatively and inserting "\n\n" only at LARGE gaps / column resets — keeps the
+  // rarely emits a blank line (at genuine block boundaries). Matching that, joining
+  // conservatively and inserting "\n\n" only at LARGE gaps / column resets, keeps the
   // in-browser corpus close to the Python paragraphs.csv (otherwise we over-segment ~4x).
   const GAP_FACTOR = 3.0
   let out = ''
@@ -69,9 +69,9 @@ function reconstructPage(items: TextItem[]): string {
       const refH = Math.max(prevH || 0, ln.h || 0, medH) || medH
       const gap = prevY - ln.y // positive: moved down the page (PDF y grows upward)
       if (ln.y > prevY + 2.5 * refH) {
-        out += '\n\n' // jumped well up the page — new column / section
+        out += '\n\n' // jumped well up the page: new column / section
       } else if (gap > GAP_FACTOR * refH) {
-        out += '\n\n' // large vertical gap — genuine block break
+        out += '\n\n' // large vertical gap: genuine block break
       } else {
         out += '\n'
       }
